@@ -7,13 +7,12 @@ environment:
 install:
   - cd C:\projects\yuchengxin-github-io-source
   - rm -rf node_modules
-  - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-  - nvm install v6.10.0
   - node --version
   - npm --version
-  - npm install
   - npm install hexo-cli -g
   - npm install hexo --save
+  - npm install
+  - npm install hexo-deployer-git
 
 build_script:
   - ls
