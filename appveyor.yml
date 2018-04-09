@@ -7,9 +7,9 @@ environment:
 install:
   - node --version
   - npm --version
-  - cd C:\projects\yuchengxin-github-io-source
   - npm install
   - npm install hexo-cli -g
+  - npm install hexo --save
 
 build_script:
   - hexo generate
