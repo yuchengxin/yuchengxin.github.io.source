@@ -5,12 +5,12 @@ environment:
     secure: UYtPfihIQ+195E+A/Wf9lisrbvwTMezFF5e3JD+bRaPHzdfbyB4JcRDjoitzAREK
 
 install:
-  - npm install -g npm
+  - cd C:\projects\yuchengxin-github-io-source
+  - rm -rf node_modules
+  - npm install -g n
+  - n stable
   - node --version
   - npm --version
-  - cd C:\projects\yuchengxin-github-io-source
-  - pwd
-  - rm -rf node_modules
   - npm install
   - npm install hexo-cli -g
   - npm install hexo --save
