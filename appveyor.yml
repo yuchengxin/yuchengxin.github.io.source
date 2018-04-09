@@ -10,6 +10,7 @@ install:
   - npm --version
   - cd C:\projects\yuchengxin-github-io-source
   - pwd
+  - rm -rf node_modules
   - npm install
   - npm install hexo-cli -g
   - npm install hexo --save
