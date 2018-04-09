@@ -5,7 +5,9 @@ environment:
     secure: UYtPfihIQ+195E+A/Wf9lisrbvwTMezFF5e3JD+bRaPHzdfbyB4JcRDjoitzAREK
 
 install:
-  - npm install -g npm
+  - npm cache clean -f
+  - npm install -g n --force
+  - n stable
   - node --version
   - npm --version
   - npm install
@@ -13,6 +15,7 @@ install:
   - npm install hexo --save
 
 build_script:
+  - hexo clean
   - hexo generate
 
 artifacts:
