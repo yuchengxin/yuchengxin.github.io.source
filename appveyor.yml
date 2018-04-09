@@ -8,7 +8,7 @@ install:
   - cd C:\projects\yuchengxin-github-io-source
   - rm -rf node_modules
   - npm install -g n -f
-  - n stable
+  - n latest
   - node --version
   - npm --version
   - npm install
