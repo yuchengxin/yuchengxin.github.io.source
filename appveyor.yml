@@ -7,7 +7,6 @@ environment:
 install:
   - npm cache clean -f
   - npm install -g n --force
-  - n stable
   - node --version
   - npm --version
   - npm install
