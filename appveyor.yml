@@ -7,8 +7,7 @@ environment:
 install:
   - cd C:\projects\yuchengxin-github-io-source
   - rm -rf node_modules
-  - npm install -g n -f
-  - n latest
+  - nvm install v6.10.0
   - node --version
   - npm --version
   - npm install
