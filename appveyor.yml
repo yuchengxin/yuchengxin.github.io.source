@@ -9,12 +9,11 @@ install:
   - rm -rf node_modules
   - node --version
   - npm --version
-  - npm install hexo --save
+  - npm install hexo
   - npm install
   - npm install hexo-deployer-git
 
 build_script:
-  - ls
   - hexo clean
   - hexo generate
 
