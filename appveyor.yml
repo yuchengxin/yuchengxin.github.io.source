@@ -15,6 +15,7 @@ install:
   - npm install hexo --save
 
 build_script:
+  - ls
   - hexo clean
   - hexo generate
 
