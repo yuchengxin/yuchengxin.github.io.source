@@ -5,6 +5,8 @@ environment:
     secure: UYtPfihIQ+195E+A/Wf9lisrbvwTMezFF5e3JD+bRaPHzdfbyB4JcRDjoitzAREK
 
 install:
+  - npm install -g n
+  - n stable
   - node --version
   - npm --version
   - npm install
