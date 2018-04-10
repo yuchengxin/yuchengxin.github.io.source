@@ -1,0 +1,885 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java,多线程,阻塞队列,DelayQUeue," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Catyee's Tech Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/uploads/cat.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="阻塞队列阻塞队列（BlockingQueue）是那些支持持阻塞的插入和移除的队列。1）支持阻塞的插入方法：意思是当队列满时，队列会阻塞插入元素的线程，直到队列不满。2）支持阻塞的移除方法：意思是在队列为空时，获取元素的线程会等待队列变为非空。 阻塞队列常用于生产者和消费者的场景，生产者是向队列里添加元素的线程，消费者是从队列里取元素的线程。阻塞队列就是生产者用来存放元素、消费者用来获取元素的容器。">
+<meta name="keywords" content="java,多线程,阻塞队列,DelayQUeue">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;font color=#0099ff size=6 face=&quot;微软雅黑&quot;&gt;阻塞队列DealayQueue&lt;&#x2F;font&gt;">
+<meta property="og:url" content="http://yoursite.com/2017/06/13/阻塞队列DealayQueue/index.html">
+<meta property="og:site_name" content="Catyee&#39;s Tech Blog">
+<meta property="og:description" content="阻塞队列阻塞队列（BlockingQueue）是那些支持持阻塞的插入和移除的队列。1）支持阻塞的插入方法：意思是当队列满时，队列会阻塞插入元素的线程，直到队列不满。2）支持阻塞的移除方法：意思是在队列为空时，获取元素的线程会等待队列变为非空。 阻塞队列常用于生产者和消费者的场景，生产者是向队列里添加元素的线程，消费者是从队列里取元素的线程。阻塞队列就是生产者用来存放元素、消费者用来获取元素的容器。">
+<meta property="og:updated_time" content="2017-07-12T01:45:50.180Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&lt;font color=#0099ff size=6 face=&quot;微软雅黑&quot;&gt;阻塞队列DealayQueue&lt;&#x2F;font&gt;">
+<meta name="twitter:description" content="阻塞队列阻塞队列（BlockingQueue）是那些支持持阻塞的插入和移除的队列。1）支持阻塞的插入方法：意思是当队列满时，队列会阻塞插入元素的线程，直到队列不满。2）支持阻塞的移除方法：意思是在队列为空时，获取元素的线程会等待队列变为非空。 阻塞队列常用于生产者和消费者的场景，生产者是向队列里添加元素的线程，消费者是从队列里取元素的线程。阻塞队列就是生产者用来存放元素、消费者用来获取元素的容器。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/13/阻塞队列DealayQueue/"/>
+
+
+
+
+
+  <title><font color=#0099ff size=6 face="微软雅黑">阻塞队列DealayQueue</font> | Catyee's Tech Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+	<a href="https://github.com/yuchengxin"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Catyee's Tech Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">学习与成长</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/13/阻塞队列DealayQueue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Catyee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/image.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catyee's Tech Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"><font color=#0099ff size=6 face="微软雅黑">阻塞队列DealayQueue</font></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-13T09:42:23+08:00">
+                2017-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java多线程/" itemprop="url" rel="index">
+                    <span itemprop="name">java多线程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/06/13/阻塞队列DealayQueue/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="阻塞队列"><a href="#阻塞队列" class="headerlink" title="阻塞队列"></a>阻塞队列</h1><p>阻塞队列（BlockingQueue）是那些支持持阻塞的插入和移除的队列。<br>1）支持阻塞的插入方法：意思是当队列满时，队列会阻塞插入元素的线程，直到队列不满。<br>2）支持阻塞的移除方法：意思是在队列为空时，获取元素的线程会等待队列变为非空。</p>
+<p>阻塞队列常用于生产者和消费者的场景，生产者是向队列里添加元素的线程，消费者是从队列里取元素的线程。阻塞队列就是生产者用来存放元素、消费者用来获取元素的容器。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">方法/处理方式</th>
+<th>抛出异常</th>
+<th>返回特殊值</th>
+<th>一直阻塞</th>
+<th>超时退出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">插入方法</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+<td>put(e)</td>
+<td>ofer(e,time,unit)</td>
+</tr>
+<tr>
+<td style="text-align:left">移除方法</td>
+<td>remove()</td>
+<td>poll()</td>
+<td>take()</td>
+<td>poll(time,unit)</td>
+</tr>
+<tr>
+<td style="text-align:left">检查方法</td>
+<td>element()</td>
+<td>peek()</td>
+<td>不可用</td>
+<td>不可用</td>
+</tr>
+</tbody>
+</table>
+<p>·抛出异常：当队列满时，如果再往队列里插入元素，会抛出IllegalStateException（”Queuefull”）异常。当队列空时，从队列里获取元素会抛出NoSuchElementException异常。<br>·返回特殊值：当往队列插入元素时，会返回元素是否插入成功，成功返回true。如果是移除方法，则是从队列里取出一个元素，如果没有则返回null。<br>·一直阻塞：当阻塞队列满时，如果生产者线程往队列里put元素，队列会一直阻塞生产者线程，直到队列可用或者响应中断退出。当队列空时，如果消费者线程从队列里take元素，队列会阻塞住消费者线程，直到队列不为空。<br>·超时退出：当阻塞队列满时，如果生产者线程往队列里插入元素，队列会阻塞生产者线程一段时间，如果超过了指定的时间，生产者线程就会退出。</p>
+<p><strong>注意:</strong>如果是无界阻塞队列，队列不可能会出现满的情况，所以使用put或offer方法永远不会被阻塞，而且使用offer方法时，该方法永远返回true。</p>
+<p><strong>JDK 7中的阻塞队列：</strong></p>
+<ul>
+<li>ArrayBlockingQueue：一个由数组结构组成的有界阻塞队列。</li>
+<li>LinkedBlockingQueue：一个由链表结构组成的有界阻塞队列。</li>
+<li>PriorityBlockingQueue：一个支持优先级排序的无界阻塞队列。</li>
+<li>DelayQueue：一个使用优先级队列实现的无界阻塞队列。</li>
+<li>SynchronousQueue：一个不存储元素的阻塞队列。</li>
+<li>LinkedTransferQueue：一个由链表结构组成的无界阻塞队列。</li>
+<li>LinkedBlockingDeque：一个由链表结构组成的双向阻塞队列。</li>
+</ul>
+<h1 id="DelayQUeue"><a href="#DelayQUeue" class="headerlink" title="DelayQUeue"></a>DelayQUeue</h1><p>DelayQueue是一个无界的BlockingQueue，用于放置实现了Delayed接口的对象，队列使用PriorityQueue来实现。队列中的元素必须实现Delayed接口，在创建元素时可以指定多久才能从队列中获取当前元素。只有在延迟期满时才能从队列中提取元素。这种队列是有序的，即队头对象的延迟到期时间最长。注意：不能将null元素放置到这种队列中。DelayQueue非常有用，可以将DelayQueue运用在以下应用场景：</p>
+<ul>
+<li>缓存系统的设计：可以用DelayQueue保存缓存元素的有效期，使用一个线程循环查询DelayQueue，一旦能从DelayQueue中获取元素时，表示缓存有效期到了。</li>
+<li>定时任务调度：使用DelayQueue保存当天将会执行的任务和执行时间，一旦从DelayQueue中获取到任务就开始执行，比如TimerQueue就是使用DelayQueue实现的。</li>
+</ul>
+<p>Delayed一种混合风格的接口，用来标记那些应该在给定延迟时间之后执行的对象。此接口的实现必须定义一个 compareTo方法，该方法提供与此接口的getDelay方法一致的排序。</p>
+<h2 id="使用DelayQueue"><a href="#使用DelayQueue" class="headerlink" title="使用DelayQueue"></a>使用DelayQueue</h2><p><strong>一、实现Delayed接口：</strong><br>DelayQueue队列的元素必须实现Delayed接口。我们可以参考ScheduledThreadPoolExecutor里ScheduledFutureTask类的实现,首先，在对象创建的时候，初始化基本数据。使用time记录当前对象延迟到什么时候可以使用，使用sequenceNumber来标识元素在队列中的先后顺序。代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicLong sequencer = <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</div><div class="line"><span class="function">Scheduled <span class="title">FutureTask</span><span class="params">(Runnable r, V result, <span class="keyword">long</span> ns, <span class="keyword">long</span> period)</span> </span>&#123;</div><div class="line"><span class="function">Scheduled <span class="title">FutureTask</span><span class="params">(Runnable r, V result, <span class="keyword">long</span> ns, <span class="keyword">long</span> period)</span> </span>&#123;</div><div class="line">            <span class="keyword">super</span>(r, result);</div><div class="line">            <span class="keyword">this</span>.time = ns;</div><div class="line">            <span class="keyword">this</span>.period = period;</div><div class="line">            <span class="keyword">this</span>.sequence Number = sequencer.getAndIncrement();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第二步：实现getDelay方法，该方法返回当前元素还需要延时多长时间，单位是纳秒，代码如下。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getDelay</span><span class="params">(TimeUnit unit)</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> unit.convert(time - now(), Time Unit.NANOSECONDS);</div><div class="line">        &#125;</div></pre></td></tr></table></figure></p>
+<p>通过构造函数可以看出延迟时间参数ns的单位是纳秒，自己设计的时候最好使用纳秒，因为实现getDelay()方法时可以指定任意单位，一旦以秒或分作为单位，而延时时间又精确不到纳秒就麻烦了。使用时请注意当time小于当前时间时，getDelay会返回负数。<br>第三步：实现compareTo方法来指定元素的顺序。例如，让延时时间最长的放在队列的末尾。实现代码如下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Delayed other)</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (other == <span class="keyword">this</span>)<span class="comment">// compare zero ONLY if same object</span></div><div class="line">                <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">            <span class="keyword">if</span> (other <span class="keyword">instanceof</span> Scheduled FutureTask) &#123;</div><div class="line">                Scheduled FutureTask&lt;&gt; x = (Scheduled FutureTask&lt;&gt;)other;</div><div class="line">                <span class="keyword">long</span> diff = time - x.time;</div><div class="line">                <span class="keyword">if</span> (diff &lt; <span class="number">0</span>)</div><div class="line">                    <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (diff &gt; <span class="number">0</span>)</div><div class="line">                    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (sequence Number &lt; x.sequence Number)</div><div class="line">                    <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">                <span class="keyword">else</span></div><div class="line">                    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">long</span> d = (getDelay(Time Unit.NANOSECONDS) -</div><div class="line">                        other.getDelay(Time Unit.NANOSECONDS));</div><div class="line">            <span class="keyword">return</span> (d == <span class="number">0</span>)  <span class="number">0</span> : ((d &lt; <span class="number">0</span>)  -<span class="number">1</span> : <span class="number">1</span>);</div><div class="line">        &#125;</div></pre></td></tr></table></figure></p>
+<p><strong>二、实现延时阻塞队列</strong><br>延时阻塞队列的实现很简单，当消费者从队列里获取元素时，如果元素没有达到延时时间，就阻塞当前线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">long</span> delay = first.getDelay(Time Unit.NANOSECONDS);</div><div class="line"><span class="keyword">if</span> (delay &lt;= <span class="number">0</span>)</div><div class="line">    <span class="keyword">return</span> q.poll();</div><div class="line"><span class="keyword">else</span> <span class="keyword">if</span> (leader != <span class="keyword">null</span>)</div><div class="line">        available.await();</div><div class="line"><span class="keyword">else</span> &#123;</div><div class="line">    Thread thisThread = Thread.currentThread();</div><div class="line">    leader = thisThread;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">                available.awaitNanos(delay);</div><div class="line">            &#125; <span class="keyword">finally</span> &#123;</div><div class="line">                <span class="keyword">if</span> (leader == thisThread)</div><div class="line">                leader = <span class="keyword">null</span>;</div><div class="line">            &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>代码中的变量leader是一个等待获取队列头部元素的线程。如果leader不等于空，表示已经有线程在等待获取队列的头元素。所以，使用await()方法让当前线程等待信号。如果leader等于空，则把当前线程设置成leader，并使用awaitNanos()方法让当前线程等待接收信号或等待delay时间。</p>
+<h2 id="下面实现两种具体场景："><a href="#下面实现两种具体场景：" class="headerlink" title="下面实现两种具体场景："></a>下面实现两种具体场景：</h2><p>1、模拟一个考试的日子，考试时间为120分钟，30分钟后才可交卷，当时间到了，或学生都交完卷了考试结束。这个场景中几个点需要注意：</p>
+<ul>
+<li>考试时间为120分钟，30分钟后才可交卷，初始化考生完成试卷时间最小应为30分钟</li>
+<li>对于能够在120分钟内交卷的考生，如何实现这些考生交卷</li>
+<li>对于120分钟内没有完成考试的考生，在120分钟考试时间到后需要让他们强制交卷</li>
+<li>在所有的考生都交完卷后，需要将控制线程关闭</li>
+</ul>
+<p>实现思想：用DelayQueue存储考生（Student类），每一个考生都有自己的名字和完成试卷的时间，Teacher线程对DelayQueue进行监控，收取完成试卷小于120分钟的学生的试卷。当考试时间120分钟到时，先关闭Teacher线程，然后强制DelayQueue中还存在的考生交卷。每一个考生交卷都会进行一次countDownLatch.countDown()，当countDownLatch.await()不再阻塞说明所有考生都交完卷了，而后结束考试。</p>
+<p>Student类实现Runnable和Delayed接口，之后就可以存入DelayQueue中去了：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">implements</span> <span class="title">Runnable</span>,<span class="title">Delayed</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> workTime;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> submitTime;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isForce = <span class="keyword">false</span>;</div><div class="line">    <span class="keyword">private</span> CountDownLatch countDownLatch;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">()</span></span>&#123;&#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(String name,<span class="keyword">long</span> workTime,CountDownLatch countDownLatch)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.workTime = workTime;</div><div class="line">        <span class="keyword">this</span>.submitTime = TimeUnit.NANOSECONDS.convert(workTime, </div><div class="line">                                        TimeUnit.NANOSECONDS)+System.nanoTime();</div><div class="line">        <span class="keyword">this</span>.countDownLatch = countDownLatch;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Delayed o)</span> </span>&#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        <span class="keyword">if</span>(o == <span class="keyword">null</span> || ! (o <span class="keyword">instanceof</span> Student)) <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        <span class="keyword">if</span>(o == <span class="keyword">this</span>) <span class="keyword">return</span> <span class="number">0</span>; </div><div class="line">        Student s = (Student)o;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.workTime &gt; s.workTime) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">this</span>.workTime == s.workTime) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">        &#125;<span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getDelay</span><span class="params">(TimeUnit unit)</span> </span>&#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        <span class="keyword">return</span> unit.convert(submitTime - System.nanoTime(),  TimeUnit.NANOSECONDS);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        <span class="keyword">if</span> (isForce) &#123;</div><div class="line">            System.out.println(name + <span class="string">" 交卷, 希望用时"</span> + workTime + <span class="string">"分钟"</span>+<span class="string">" ,实际用时 120分钟"</span> );</div><div class="line">        &#125;<span class="keyword">else</span> &#123;</div><div class="line">            System.out.println(name + <span class="string">" 交卷, 希望用时"</span> + workTime + </div><div class="line">                                                <span class="string">"分钟"</span>+<span class="string">" ,实际用时 "</span>+workTime +<span class="string">" 分钟"</span>);  </div><div class="line">        &#125;</div><div class="line">        countDownLatch.countDown();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isForce</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> isForce;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setForce</span><span class="params">(<span class="keyword">boolean</span> isForce)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.isForce = isForce;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Teacher类用来收取DelayQueue中时间到了的学生的试卷。也就是说一个学生如果用时大于30分钟小于120分钟，那么当时间到了的时候Teacheer类就会从QelayQueue中取出这个学生。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Teacher</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> DelayQueue&lt;Student&gt; students;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Teacher</span><span class="params">(DelayQueue&lt;Student&gt; students)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.students = students;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            System.out.println(<span class="string">" test start"</span>);</div><div class="line">            <span class="keyword">while</span>(!Thread.interrupted())&#123;</div><div class="line">                students.take().run();</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="comment">// <span class="doctag">TODO:</span> handle exception</span></div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>EndExam类是强制交卷类，当考生用时超过120分钟就会强制从DelayQueue中取出来。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">EndExam</span> <span class="keyword">extends</span> <span class="title">Student</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> DelayQueue&lt;Student&gt; students;</div><div class="line">    <span class="keyword">private</span> CountDownLatch countDownLatch;</div><div class="line">    <span class="keyword">private</span> Thread teacherThread;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EndExam</span><span class="params">(DelayQueue&lt;Student&gt; students, <span class="keyword">long</span> workTime, </span></span></div><div class="line">                        CountDownLatch countDownLatch,Thread teacherThread) &#123;</div><div class="line">        <span class="keyword">super</span>(<span class="string">"强制收卷"</span>, workTime,countDownLatch);</div><div class="line">        <span class="keyword">this</span>.students = students;</div><div class="line">        <span class="keyword">this</span>.countDownLatch = countDownLatch;</div><div class="line">        <span class="keyword">this</span>.teacherThread = teacherThread;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        </div><div class="line">        teacherThread.interrupt();</div><div class="line">        Student tmpStudent;</div><div class="line">        <span class="keyword">for</span> (Iterator&lt;Student&gt; iterator2 = students.iterator(); iterator2.hasNext();) &#123;</div><div class="line">            tmpStudent = iterator2.next();</div><div class="line">            tmpStudent.setForce(<span class="keyword">true</span>);</div><div class="line">            tmpStudent.run();</div><div class="line">        &#125;</div><div class="line">        countDownLatch.countDown();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Exam是考试主类,包含一个main方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Exam</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        <span class="keyword">int</span> studentNumber = <span class="number">20</span>;</div><div class="line">        CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(studentNumber+<span class="number">1</span>);</div><div class="line">        DelayQueue&lt; Student&gt; students = <span class="keyword">new</span> DelayQueue&lt;Student&gt;();</div><div class="line">        Random random = <span class="keyword">new</span> Random();</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; studentNumber; i++) &#123;</div><div class="line">            students.put(<span class="keyword">new</span> Student(<span class="string">"student"</span>+(i+<span class="number">1</span>), <span class="number">30</span>+random.nextInt(<span class="number">120</span>),countDownLatch));</div><div class="line">        &#125;</div><div class="line">        Thread teacherThread =<span class="keyword">new</span> Thread(<span class="keyword">new</span> Teacher(students)); </div><div class="line">        students.put(<span class="keyword">new</span> EndExam(students, <span class="number">120</span>,countDownLatch,teacherThread));</div><div class="line">        teacherThread.start();</div><div class="line">        countDownLatch.await();</div><div class="line">        System.out.println(<span class="string">" 考试时间到，全部交卷！"</span>);  </div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>2、具有过期时间的缓存</strong><br>向缓存添加内容时，给每一个key设定过期时间，系统自动将超过过期时间的key清除。这个场景中几个点需要注意：</p>
+<ul>
+<li>当向缓存中添加key-value对时，如果这个key在缓存中存在并且还没有过期，需要用这个key对应的新过期时间。</li>
+<li>为了能够让DelayQueue将其已保存的key删除，需要重写实现Delayed接口可添加到DelayQueue的DelayedItem的hashCode函数和equals函数。</li>
+<li>当缓存关闭，监控程序也应关闭，因而监控线程应当用守护线程。</li>
+</ul>
+<p>Cache主类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Cache</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> ConcurrentHashMap&lt;K, V&gt; map = <span class="keyword">new</span> ConcurrentHashMap&lt;K, V&gt;();</div><div class="line">    <span class="keyword">public</span> DelayQueue&lt;DelayedItem&lt;K&gt;&gt; queue = <span class="keyword">new</span> DelayQueue&lt;DelayedItem&lt;K&gt;&gt;();</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(K k,V v,<span class="keyword">long</span> liveTime)</span></span>&#123;</div><div class="line">        V v2 = map.put(k, v);</div><div class="line">        DelayedItem&lt;K&gt; tmpItem = <span class="keyword">new</span> DelayedItem&lt;K&gt;(k, liveTime);</div><div class="line">        <span class="keyword">if</span> (v2 != <span class="keyword">null</span>) &#123;</div><div class="line">            queue.remove(tmpItem);</div><div class="line">        &#125;</div><div class="line">        queue.put(tmpItem);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Cache</span><span class="params">()</span></span>&#123;</div><div class="line">        Thread t = <span class="keyword">new</span> Thread()&#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</div><div class="line">                dameonCheckOverdueKey();</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        t.setDaemon(<span class="keyword">true</span>);</div><div class="line">        t.start();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dameonCheckOverdueKey</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            DelayedItem&lt;K&gt; delayedItem = queue.poll();</div><div class="line">            <span class="keyword">if</span> (delayedItem != <span class="keyword">null</span>) &#123;</div><div class="line">                map.remove(delayedItem.getT());</div><div class="line">                System.out.println(System.nanoTime()+<span class="string">" remove "</span>+</div><div class="line">                                delayedItem.getT() +<span class="string">" from cache"</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                Thread.sleep(<span class="number">300</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">                <span class="comment">// <span class="doctag">TODO:</span> handle exception</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        Random random = <span class="keyword">new</span> Random();</div><div class="line">        <span class="keyword">int</span> cacheNumber = <span class="number">10</span>;</div><div class="line">        <span class="keyword">int</span> liveTime = <span class="number">0</span>;</div><div class="line">        Cache&lt;String, Integer&gt; cache = <span class="keyword">new</span> Cache&lt;String, Integer&gt;();</div><div class="line">        </div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cacheNumber; i++) &#123;</div><div class="line">            liveTime = random.nextInt(<span class="number">3000</span>);</div><div class="line">            System.out.println(i+<span class="string">"  "</span>+liveTime);</div><div class="line">            cache.put(i+<span class="string">""</span>, i, random.nextInt(liveTime));</div><div class="line">            <span class="keyword">if</span> (random.nextInt(cacheNumber) &gt; <span class="number">7</span>) &#123;</div><div class="line">                liveTime = random.nextInt(<span class="number">3000</span>);</div><div class="line">                System.out.println(i+<span class="string">"  "</span>+liveTime);</div><div class="line">                cache.put(i+<span class="string">""</span>, i, random.nextInt(liveTime));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Thread.sleep(<span class="number">3000</span>);</div><div class="line">        System.out.println();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>DelayedItem类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DelayedItem</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">Delayed</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> T t;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> liveTime ;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">long</span> removeTime;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DelayedItem</span><span class="params">(T t,<span class="keyword">long</span> liveTime)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.setT(t);</div><div class="line">        <span class="keyword">this</span>.liveTime = liveTime;</div><div class="line">        <span class="keyword">this</span>.removeTime = TimeUnit.NANOSECONDS.convert(liveTime, TimeUnit.NANOSECONDS) + </div><div class="line">                                        System.nanoTime();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Delayed o)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (o == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        <span class="keyword">if</span> (o == <span class="keyword">this</span>) <span class="keyword">return</span>  <span class="number">0</span>;</div><div class="line">        <span class="keyword">if</span> (o <span class="keyword">instanceof</span> DelayedItem)&#123;</div><div class="line">            DelayedItem&lt;T&gt; tmpDelayedItem = (DelayedItem&lt;T&gt;)o;</div><div class="line">            <span class="keyword">if</span> (liveTime &gt; tmpDelayedItem.liveTime ) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span> (liveTime == tmpDelayedItem.liveTime) &#123;</div><div class="line">                <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">            &#125;<span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">long</span> diff = getDelay(TimeUnit.NANOSECONDS) - o.getDelay(TimeUnit.NANOSECONDS);</div><div class="line">        <span class="keyword">return</span> diff &gt; <span class="number">0</span> ? <span class="number">1</span>:diff == <span class="number">0</span>? <span class="number">0</span>:-<span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getDelay</span><span class="params">(TimeUnit unit)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> unit.convert(removeTime - System.nanoTime(), unit);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">getT</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> t;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setT</span><span class="params">(T t)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.t = t;</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> t.hashCode();</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object object)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span> (object <span class="keyword">instanceof</span> DelayedItem) &#123;</div><div class="line">            <span class="keyword">return</span> object.hashCode() == hashCode() ?<span class="keyword">true</span>:<span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/多线程/" rel="tag"># 多线程</a>
+          
+            <a href="/tags/阻塞队列/" rel="tag"># 阻塞队列</a>
+          
+            <a href="/tags/DelayQUeue/" rel="tag"># DelayQUeue</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/09/Spring实战（三） 通过Java代码装配Bean/" rel="next" title="<font color=#0099ff size=6 face="微软雅黑">Spring实战（四） 通过Java代码装配Bean</font>">
+                <i class="fa fa-chevron-left"></i> <font color=#0099ff size=6 face="微软雅黑">Spring实战（四） 通过Java代码装配Bean</font>
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/14/阻塞队列 PriorityBlockingQueue/" rel="prev" title="<font color=#0099ff size=6 face="微软雅黑">阻塞队列 PriorityBlockingQueue</font>">
+                <font color=#0099ff size=6 face="微软雅黑">阻塞队列 PriorityBlockingQueue</font> <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/image.jpg"
+               alt="Catyee" />
+          <p class="site-author-name" itemprop="name">Catyee</p>
+           
+              <p class="site-description motion-element" itemprop="description">To be a rock and not to roll...</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/yuchengxin" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2395675263" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/Y_yucheng/" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/yuchengxin" title="github" target="_blank">github</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#阻塞队列"><span class="nav-text">阻塞队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DelayQUeue"><span class="nav-text">DelayQUeue</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用DelayQueue"><span class="nav-text">使用DelayQueue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下面实现两种具体场景："><span class="nav-text">下面实现两种具体场景：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catyee</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "a484f4152ac740f6863fc1aa2dfc0231",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
+
+
+  
+
+</body>
+</html>

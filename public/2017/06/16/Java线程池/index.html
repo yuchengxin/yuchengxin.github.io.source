@@ -1,0 +1,899 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java,多线程,Executor,TreadPoolExecutor,ExecutorService," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Catyee's Tech Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/uploads/cat.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="背景在面向对象编程中，创建和销毁对象是很费时间的，因为创建一个对象要获取内存资源或者其它更多资源。在Java中更是如此，虚拟机将试图跟踪每一个对象，以便能够在对象销毁后进行垃圾回收。 所以提高服务程序效率的一个手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。如何利用已有对象来服务就是一个需要解决的关键问题，其实这就是一些”池化资源”技术产生的原因。 例如Android中">
+<meta name="keywords" content="java,多线程,Executor,TreadPoolExecutor,ExecutorService">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;font color=#0099ff size=6 face=&quot;微软雅黑&quot;&gt;Java线程池&lt;&#x2F;font&gt;">
+<meta property="og:url" content="http://yoursite.com/2017/06/16/Java线程池/index.html">
+<meta property="og:site_name" content="Catyee&#39;s Tech Blog">
+<meta property="og:description" content="背景在面向对象编程中，创建和销毁对象是很费时间的，因为创建一个对象要获取内存资源或者其它更多资源。在Java中更是如此，虚拟机将试图跟踪每一个对象，以便能够在对象销毁后进行垃圾回收。 所以提高服务程序效率的一个手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。如何利用已有对象来服务就是一个需要解决的关键问题，其实这就是一些”池化资源”技术产生的原因。 例如Android中">
+<meta property="og:image" content="http://yoursite.com/2017/06/16/Java线程池/a.jpg">
+<meta property="og:image" content="http://yoursite.com/2017/06/16/Java线程池/b.jpg">
+<meta property="og:image" content="http://yoursite.com/2017/06/16/Java线程池/c.jpg">
+<meta property="og:updated_time" content="2017-07-12T01:49:54.615Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&lt;font color=#0099ff size=6 face=&quot;微软雅黑&quot;&gt;Java线程池&lt;&#x2F;font&gt;">
+<meta name="twitter:description" content="背景在面向对象编程中，创建和销毁对象是很费时间的，因为创建一个对象要获取内存资源或者其它更多资源。在Java中更是如此，虚拟机将试图跟踪每一个对象，以便能够在对象销毁后进行垃圾回收。 所以提高服务程序效率的一个手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。如何利用已有对象来服务就是一个需要解决的关键问题，其实这就是一些”池化资源”技术产生的原因。 例如Android中">
+<meta name="twitter:image" content="http://yoursite.com/2017/06/16/Java线程池/a.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/16/Java线程池/"/>
+
+
+
+
+
+  <title><font color=#0099ff size=6 face="微软雅黑">Java线程池</font> | Catyee's Tech Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+	<a href="https://github.com/yuchengxin"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Catyee's Tech Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">学习与成长</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/16/Java线程池/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Catyee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/image.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catyee's Tech Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"><font color=#0099ff size=6 face="微软雅黑">Java线程池</font></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-16T08:50:06+08:00">
+                2017-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java多线程/" itemprop="url" rel="index">
+                    <span itemprop="name">java多线程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/06/16/Java线程池/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>在面向对象编程中，创建和销毁对象是很费时间的，因为创建一个对象要获取内存资源或者其它更多资源。在Java中更是如此，虚拟机将试图跟踪每一个对象，以便能够在对象销毁后进行垃圾回收。</p>
+<p>所以提高服务程序效率的一个手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。如何利用已有对象来服务就是一个需要解决的关键问题，其实这就是一些”池化资源”技术产生的原因。</p>
+<p>例如Android中常见到的很多通用组件一般都离不开”池”的概念，如各种图片加载库，网络请求库，即使Android的消息传递机制中的Meaasge当使用Meaasge.obtain()就是使用的Meaasge池中的对象，因此这个概念很重要。本文将介绍的线程池技术同样符合这一思想。</p>
+<p>线程池的优点:</p>
+<ul>
+<li>重用线程池中的线程,减少因对象创建,销毁所带来的性能开销;</li>
+<li>能有效的控制线程的最大并发数,提高系统资源利用率,同时避免过多的资源竞争,避免堵塞;</li>
+<li>能够多线程进行简单的管理,使线程的使用简单、高效。</li>
+</ul>
+<h1 id="线程池框架Executor"><a href="#线程池框架Executor" class="headerlink" title="线程池框架Executor"></a>线程池框架Executor</h1><p>java中的线程池是通过Executor框架实现的，Executor框架包括类：Executor，Executors，ExecutorService，ThreadPoolExecutor ，Callable和Future、FutureTask的使用等。<br><img src="/2017/06/16/Java线程池/a.jpg" alt="线程池框架"></p>
+<p><strong>Executor</strong>: 所有线程池的接口,只有一个方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Executor</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>ExecutorService</strong>: 增加Executor的行为，是Executor实现类的最直接接口。<br><strong>Executors</strong>： 提供了一系列工厂方法用于创建线程池，返回的线程池都实现了ExecutorService接口。<br><strong>ThreadPoolExecutor</strong>：线程池的具体实现类,一般用的各种线程池都是基于这个类实现的。<br>构造方法如下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, </span></span></div><div class="line">                    TimeUnit unit, BlockingQueue&lt;Runnable&gt; workQueue) &#123;</div><div class="line"> </div><div class="line">    <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</div><div class="line">    Executors.defaultThreadFactory(), defaultHandler);</div><div class="line"> </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中各个参数的含义：</p>
+<ol>
+<li>corePoolSize：线程池的核心线程数,默认情况下可以一直存活。可以设置allowCoreThreadTimeOut为True,此时 核心线程数就是0,就可以用keepAliveTime控制所有线程的超时时间。</li>
+<li>maximumPoolSize：线程池允许的最大线程数;</li>
+<li>keepAliveTime： 指的是空闲线程结束的超时时间;</li>
+<li>unit ：是一个枚举，表示 keepAliveTime 的单位;</li>
+<li>workQueue：表示存放任务的BlockingQueue&lt;Runnable队列。</li>
+<li>BlockingQueue:阻塞队列（BlockingQueue）是java.util.concurrent下的主要用来控制线程同步的工具。如果BlockQueue是空的,从BlockingQueue取东西的操作将会被阻断进入等待状态,直到BlockingQueue有数据才会被唤醒。同样,如果BlockingQueue是满的,任何试图往里存东西的操作也会被阻断进入等待状态,直到BlockingQueue里有空间才会被唤醒继续操作。具体的实现类有LinkedBlockingQueue,ArrayBlockingQueued,DelayQueue,PriorityBlockingQueue等。</li>
+</ol>
+<h1 id="线程池的工作过程："><a href="#线程池的工作过程：" class="headerlink" title="线程池的工作过程："></a>线程池的工作过程：</h1><p>线程池刚创建时，里面没有一个线程。任务放在阻塞队列中作为参数传进来的。不过，就算队列里面有任务，线程池也不会马上执行它们。<br>当调用 execute() 方法添加一个任务时，线程池会做如下判断：</p>
+<ol>
+<li>如果正在运行的线程数量小于 corePoolSize，那么马上创建线程运行这个任务；</li>
+<li>如果正在运行的线程数量大于或等于 corePoolSize，那么将这个任务放入队列；</li>
+<li>如果这时候队列满了，而且正在运行的线程数量小于maximumPoolSize，那么还是要创建非核心线程立刻运行这个任务；</li>
+<li>如果队列满了，而且正在运行的线程数量大于或等于maximumPoolSize，那么线程池会抛出异常RejectExecutionException。</li>
+</ol>
+<p>当一个线程完成任务时，它会从队列中取下一个任务来执行。<br>当一个线程无事可做，超过一定的时间（keepAliveTime）时，线程池会判断，如果当前运行的线程数大于 corePoolSize，那么这个线程就被停掉。所以线程池的所有任务完成后，它最终会收缩到 corePoolSize 的大小。</p>
+<h1 id="线程池的创建和使用"><a href="#线程池的创建和使用" class="headerlink" title="线程池的创建和使用"></a>线程池的创建和使用</h1><h2 id="线程池的生成："><a href="#线程池的生成：" class="headerlink" title="线程池的生成："></a>线程池的生成：</h2><p>生成线程池采用了工具类Executors的静态方法，以下是几种常见的线程池。</p>
+<ul>
+<li>SingleThreadExecutor：单个后台线程 (其缓冲队列是无界的)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newSingleThreadExecutor</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> FinalizableDelegatedExecutorService ( <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">1</span>, <span class="number">1</span>,</div><div class="line">                              <span class="number">0L</span>, TimeUnit.MILLISECONDS, <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建一个单线程的线程池。可以看到maximumPoolSize和corePoolSize都是1，这个线程池只有一个核心线程在工作，也就是相当于单线程串行执行所有任务。如果这个唯一的线程因为异常结束，那么会有一个新的线程来替代它。此线程池保证所有任务的执行顺序按照任务的提交顺序执行。</p>
+<ul>
+<li>FixedThreadPool：只有核心线程的线程池,大小固定 (其缓冲队列是无界的) 。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads, <span class="number">0L</span>, TimeUnit.MILLISECONDS,</div><div class="line">                            <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建固定大小的线程池。可以看到maximumPoolSize和corePoolSize相等，每次提交一个任务就创建一个线程，直到线程达到线程池的最大大小。线程池的大小一旦达到最大值就会保持不变，如果某个线程因为执行异常而结束，那么线程池会补充一个新线程。</p>
+<ul>
+<li>CachedThreadPool：无界线程池，可以进行自动线程回收。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>,Integer.MAX_VALUE, <span class="number">60L</span>, TimeUnit.SECONDS,</div><div class="line">                            <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建一个无界的线程池，可以看到corePoolSize是0，而maximumPoolSize是整型数的最大值。当任务数增加时，此线程池可以智能的添加新线程来处理任务，而如果线程池的大小超过了处理任务所需要的线程，那么就会回收部分空闲（60秒不执行任务）的线程。此线程池不会对线程池大小做限制，线程池大小完全依赖于操作系统（或者说JVM）能够创建的最大线程大小。SynchronousQueue是一个是缓冲区为1的阻塞队列。</p>
+<ul>
+<li>ScheduledThreadPool：核心线程池固定，大小无限的线程池。此线程池支持定时以及周期性执行任务的需求。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPool(corePoolSize,Integer.MAX_VALUE,DEFAULT_KEEPALIVE_MILLIS,</div><div class="line">                                MILLISECONDS,<span class="keyword">new</span> DelayedWorkQueue());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建一个周期性执行任务的线程池。如果闲置,非核心线程池会在DEFAULT_KEEPALIVEMILLIS时间内回收。DleayQueue是一个延迟阻塞队列，它实现了Delayed接口，只有达到指定延迟时间才能从里面取出数据，然后交由线程池中的线程去处理。</p>
+<ul>
+<li>定制自己的线程池：</li>
+</ul>
+<p>除此之外我们也可以定制自己的线程池：比如要实现一个优先级线程池，只需要把PriorityBlockingQueue作为参数传入到线程池中去:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newPriorityThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, </span></span></div><div class="line">            <span class="keyword">long</span> keepAliveTime, TimeUnit unit, PriorityBlockingQueue&lt;Runnable&gt; workQueue)&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit,</div><div class="line">                            workQueue);                                  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>所有任务都实现了Comparable和Runable接口，所以当无法直接向线程池中提交任务的时候，任务就会加入优先级阻塞队列PriorityBlockingQueue中去，PriorityBlockingQueue就会用Comparable接口中的compareTo方法来确定优先级。所以之后就会按优先级向线程池提交任务。但是注意，最开始的corePoolSize个任务由于是直接提交给线程池的，没有加入到PriorityBlockingQueue，所以是按提交顺序去执行而不是优先级。</p>
+<h2 id="线程池提交任务的方法："><a href="#线程池提交任务的方法：" class="headerlink" title="线程池提交任务的方法："></a>线程池提交任务的方法：</h2><p>1、execute:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ExecutorService.execute(Runnable runable)；</div></pre></td></tr></table></figure></p>
+<p>2、submit:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">FutureTask task = ExecutorService.submit(Runnable runnable);</div><div class="line"></div><div class="line">FutureTask&lt;T&gt; task = ExecutorService.submit(Runnable runnable,T Result);</div><div class="line"> </div><div class="line">FutureTask&lt;T&gt; task = ExecutorService.submit(Callable&lt;T&gt; callable);</div></pre></td></tr></table></figure></p>
+<p>可以去看一看submit方法是怎么实现的，下面列出了submit(Callable callable)的实现源码，submit(Runnable runnable)方法其实也是差不多的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (task == <span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</div><div class="line">    FutureTask&lt;T&gt; ftask = newTaskFor(task);</div><div class="line">    execute(ftask);</div><div class="line">    <span class="keyword">return</span> ftask;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看出submit开启的是有返回结果的任务，会返回一个FutureTask对象，这样就能通过get()方法得到任务执行的结果。其实submit最终调用的也是execute(Runnable runable)，submit只是将Callable对象或Runnable封装成一个FutureTask对象，因为FutureTask是个Runnable，所以可以在execute中执行。</p>
+<h1 id="线程池的实现原理："><a href="#线程池的实现原理：" class="headerlink" title="线程池的实现原理："></a>线程池的实现原理：</h1><p>线程池的实现过程没有用到Synchronized关键字，用的都是volatile,Lock和同步(阻塞)队列,Atomic相关类，FutureTask等等，因为后者的性能更优。理解的过程可以很好的学习源码中并发控制的思想。在开篇提到过线程池的优点是可总结为以下三点：线程复用，控制最大并发数和管理线程这三点，下面从这三个方面入手：</p>
+<h2 id="线程复用过程："><a href="#线程复用过程：" class="headerlink" title="线程复用过程："></a>线程复用过程：</h2><p>理解线程复用原理首先应了解普通线程的生命周期（注意：是线程的生命周期，不是线程池的生命周期）：<br><img src="/2017/06/16/Java线程池/b.jpg" alt="线程生命周期"><br>在线程的生命周期中，它要经过新建(New)、就绪（Runnable）、运行（Running）、阻塞(Blocked)和死亡(Dead)5种状态。</p>
+<p>我们可以通过Thread类的new()方法来新建一个线程，这个过程是是初始化一些线程信息，如线程名，id,线程所属group等，可以认为只是个普通的对象。新建的线程处于新建状态，而通过调用Thread的start()后，Java虚拟机会为其创建方法调用栈和程序计数器，同时将hasBeenStarted为true,这是线程进入就绪状态，如果这之后再调用start方法就会有异常，所以整个生命周期中start()方法只调用一次。<br>处于就绪状态的线程并没有开始运行，只是表示该线程可以运行了。至于该线程何时开始运行，取决于JVM里线程调度器的调度。当线程获取cpu后，run()方法会被调用。注意，不要自己去调用Thread的run()方法，系统会自己去调用。之后线程会根据CPU的调度在就绪——运行——阻塞之间切换，直到run()方法结束或其他方式停止线程，进入dead状态。</p>
+<p>所以实现线程复用的原理应该就是要保持线程处于存活状态（就绪，运行或阻塞）。接下来来看下ThreadPoolExecutor是怎么实现线程复用的，在ThreadPoolExecutor类中有一个内部类Worker，主要就是这个Worker类来控制线程的复用。看下Worker类简化后的代码，这样方便理解：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Worker</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"> </div><div class="line">    <span class="keyword">final</span> Thread thread;</div><div class="line">     </div><div class="line">    Runnable firstTask;</div><div class="line">     </div><div class="line">    Worker(Runnable firstTask) &#123;</div><div class="line">        <span class="keyword">this</span>.firstTask = firstTask;</div><div class="line">        <span class="keyword">this</span>.thread = getThreadFactory().newThread(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line">     </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        runWorker(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line">     </div><div class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">runWorker</span><span class="params">(Worker w)</span> </span>&#123;</div><div class="line">        Runnable task = w.firstTask;</div><div class="line">        w.firstTask = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">while</span> (task != <span class="keyword">null</span> || (task = getTask()) != <span class="keyword">null</span>)&#123;</div><div class="line">            task.run();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">private</span> Runnable <span class="title">getTask</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span>(一些特殊情况) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">        Runnable r = workQueue.take();</div><div class="line">        <span class="keyword">return</span> r;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Worker是一个实现Runnable接口的对象，同时拥有一个thread，这个thread就是要开启的线程，在调用worker构造方法新建Worker对象的同时会新建一个Thread对象，新建这个Tread对象的时候会将Worker自己作为参数传入进去，这样当Thread的start()方法调用时，线程进入就绪状态，之后获得cpu去运行的时候运行的实际上是Worker的run()方法，worker的run()方法会调用runWorker()方法,runWorker()中有个while循环，会一直从getTask()方法里得到Runnable对象(具体的任务)，然后调用这些Runable对象的run()方法(task.run())去顺序执行。可以看到getTask()方法中有一个workQueue，这个就是初始化TreadPoolExecutor时存放任务的BlockingQueue队列。这个队列中存放的都是将要执行的Runable任务。因为BlockingQueue是个阻塞队列，BlockingQueue.take()如果是空，则进入等待阻塞状态直到BlockingQueue中有新的对象加入时唤醒阻塞的线程。所以一般情况Tread的run()方法就不会结束，而是不断执行从workQueue里取得任务去执行，这就达到线程复用的原理了。</p>
+<h2 id="控制最大并发数"><a href="#控制最大并发数" class="headerlink" title="控制最大并发数"></a>控制最大并发数</h2><p>Runnable对象是什么时候放入workQueue？Worker又是什么时候创建，Worker里的Thread的又是什么时候调用start()开启新线程来执行Worker的run()方法的呢？有上面的分析看出Worker里的runWorker()执行任务时是一个接一个，串行进行的，那并发是怎么体现的呢？</p>
+<p>这些是由ThreadPoolExecutor类中的execute()方法保证的，以下是简化后的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (command == <span class="keyword">null</span>)</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</div><div class="line"></div><div class="line">     <span class="keyword">int</span> c = ctl.get();</div><div class="line">    <span class="comment">// 当前线程数 &lt; corePoolSize</span></div><div class="line">    <span class="keyword">if</span> (workerCountOf(c) &lt; corePoolSize) &#123;</div><div class="line">        <span class="comment">// 直接启动新的线程。</span></div><div class="line">        <span class="keyword">if</span> (addWorker(command, <span class="keyword">true</span>))</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        c = ctl.get();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 活动线程数 &gt;= corePoolSize</span></div><div class="line">    <span class="comment">// runState为RUNNING &amp;&amp; 队列未满</span></div><div class="line">    <span class="keyword">if</span> (isRunning(c) &amp;&amp; workQueue.offer(command)) &#123;</div><div class="line">        <span class="keyword">int</span> recheck = ctl.get();</div><div class="line">        <span class="comment">// 再次检验是否为RUNNING状态</span></div><div class="line">        <span class="comment">// 非RUNNING状态 则从workQueue中移除任务并拒绝</span></div><div class="line">        <span class="keyword">if</span> (!isRunning(recheck) &amp;&amp; remove(command))</div><div class="line">            reject(command);<span class="comment">// 采用线程池指定的策略拒绝任务</span></div><div class="line">        <span class="comment">// 两种情况：</span></div><div class="line">        <span class="comment">// 1.非RUNNING状态拒绝新的任务</span></div><div class="line">        <span class="comment">// 2.队列满了启动新的线程失败（workCount &gt; maximumPoolSize）</span></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!addWorker(command, <span class="keyword">false</span>))</div><div class="line">        reject(command);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">addWorker</span><span class="params">(Runnable firstTask, <span class="keyword">boolean</span> core)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> wc = workerCountOf(c);</div><div class="line">    <span class="keyword">if</span> (wc &gt;= (core ? corePoolSize : maximumPoolSize)) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">    w = <span class="keyword">new</span> Worker(firstTask);</div><div class="line">    <span class="keyword">final</span> Thread t = w.thread;</div><div class="line">    t.start();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>根据代码再来看上面提到的线程池工作过程中的添加任务的情况：</p>
+<ul>
+<li>如果正在运行的线程数量小于 corePoolSize，那么马上创建线程运行这个任务；   </li>
+<li>如果正在运行的线程数量大于或等于 corePoolSize，那么将这个任务放入队列；</li>
+<li>如果这时候队列满了，而且正在运行的线程数量小于maximumPoolSize，那么还是要创建非核心线程立刻运行这个任务；</li>
+<li>如果队列满了，而且正在运行的线程数量大于或等于maximumPoolSize，那么线程池会抛出异常RejectExecutionException；</li>
+</ul>
+<p>通过addWorker如果成功创建新的线程成功，则通过start()开启新线程，同时将firstTask作为这个Worker里的run()中执行的第一个任务。虽然每个Worker的任务是串行处理，但如果创建了多个Worker，因为共用一个workQueue，所以就会并行处理了。所以根据corePoolSize和maximumPoolSize来控制最大并发数。大致过程可用下图表示:<br><img src="/2017/06/16/Java线程池/c.jpg" alt="线程池添加任务过程"></p>
+<h2 id="管理线程"><a href="#管理线程" class="headerlink" title="管理线程"></a>管理线程</h2><p>通过线程池可以很好的管理线程的复用，控制并发数，以及销毁等过程,线程的复用和控制并发上面已经讲了，而线程的管理过程已经穿插在其中了，也很好理解。<br>在ThreadPoolExecutor有个ctl的AtomicInteger变量。通过这一个变量保存了两个内容：</p>
+<ul>
+<li>所有线程的数量</li>
+<li>每个线程所处的状态</li>
+</ul>
+<p>其中低29位存线程数，高3位存runState，通过位运算来得到不同的值。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> AtomicInteger ctl = <span class="keyword">new</span> AtomicInteger(ctlOf(RUNNING, <span class="number">0</span>));</div><div class="line"></div><div class="line"><span class="comment">//得到线程的状态</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">runStateOf</span><span class="params">(<span class="keyword">int</span> c)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> c &amp; ~CAPACITY;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//得到Worker的的数量</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">workerCountOf</span><span class="params">(<span class="keyword">int</span> c)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> c &amp; CAPACITY;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 判断线程是否在运行</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isRunning</span><span class="params">(<span class="keyword">int</span> c)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> c &lt; SHUTDOWN;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里主要通过shutdown()和shutdownNow()来分析线程池的关闭过程。这两个方法是关闭线程池的方法。首先线程池有五种状态来控制任务添加与执行。主要介绍以下三种：</p>
+<ul>
+<li>RUNNING状态：线程池正常运行，可以接受新的任务并处理队列中的任务；</li>
+<li>SHUTDOWN状态：不再接受新的任务，但是会执行队列中的任务；</li>
+<li>STOP状态：不再接受新任务，不处理队列中的任务</li>
+</ul>
+<p>shutdown这个方法会将runState置为SHUTDOWN，会终止所有空闲的线程，而仍在工作的线程不受影响，所以队列中的任务仍会被执行，但是线程池不再接受新的任务。shutdownNow方法则将runState置为STOP。和shutdown方法的区别，这个方法会终止所有的线程，所以队列中的任务也不会被执行了，不过线程中正在执行的任务不会突然中断，而是执行完之后线程才会关闭。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/多线程/" rel="tag"># 多线程</a>
+          
+            <a href="/tags/Executor/" rel="tag"># Executor</a>
+          
+            <a href="/tags/TreadPoolExecutor/" rel="tag"># TreadPoolExecutor</a>
+          
+            <a href="/tags/ExecutorService/" rel="tag"># ExecutorService</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/14/阻塞队列 PriorityBlockingQueue/" rel="next" title="<font color=#0099ff size=6 face="微软雅黑">阻塞队列 PriorityBlockingQueue</font>">
+                <i class="fa fa-chevron-left"></i> <font color=#0099ff size=6 face="微软雅黑">阻塞队列 PriorityBlockingQueue</font>
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/23/RESTFul API/" rel="prev" title="<font color=#0099ff size=6 face="微软雅黑">RESTFul API</font>">
+                <font color=#0099ff size=6 face="微软雅黑">RESTFul API</font> <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/image.jpg"
+               alt="Catyee" />
+          <p class="site-author-name" itemprop="name">Catyee</p>
+           
+              <p class="site-description motion-element" itemprop="description">To be a rock and not to roll...</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/yuchengxin" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2395675263" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/Y_yucheng/" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/yuchengxin" title="github" target="_blank">github</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程池框架Executor"><span class="nav-text">线程池框架Executor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程池的工作过程："><span class="nav-text">线程池的工作过程：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程池的创建和使用"><span class="nav-text">线程池的创建和使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程池的生成："><span class="nav-text">线程池的生成：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程池提交任务的方法："><span class="nav-text">线程池提交任务的方法：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程池的实现原理："><span class="nav-text">线程池的实现原理：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程复用过程："><span class="nav-text">线程复用过程：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#控制最大并发数"><span class="nav-text">控制最大并发数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理线程"><span class="nav-text">管理线程</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catyee</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "a484f4152ac740f6863fc1aa2dfc0231",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
+
+
+  
+
+</body>
+</html>

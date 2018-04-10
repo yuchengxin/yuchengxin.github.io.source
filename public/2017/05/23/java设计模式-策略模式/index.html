@@ -1,0 +1,894 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="java,设计模式,策略模式," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Catyee's Tech Blog" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/uploads/cat.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="设计原则： 找出应用中可能需要变化之处，把他们独立出来，不要和那些不需要变化的代码混在一起。把会变化的部分取出并封装起来，好让其他部分不会受到影响。 针对接口编程，而不是针对实现编程。“针对接口编程”的真正意思是针对超类编程。即：变量的申明类应该是超类型，通常是一个抽象类或者一个接口，如此，只要是具体实现此超类的类所产生的对象，都可以指定给这个变量。这也意味着，声明类时不用理会以后执行时的真正对象">
+<meta name="keywords" content="java,设计模式,策略模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;font color=#0099ff size=6 face=&quot;微软雅黑&quot;&gt;Head First设计模式-策略模式&lt;&#x2F;font&gt;">
+<meta property="og:url" content="http://yoursite.com/2017/05/23/java设计模式-策略模式/index.html">
+<meta property="og:site_name" content="Catyee&#39;s Tech Blog">
+<meta property="og:description" content="设计原则： 找出应用中可能需要变化之处，把他们独立出来，不要和那些不需要变化的代码混在一起。把会变化的部分取出并封装起来，好让其他部分不会受到影响。 针对接口编程，而不是针对实现编程。“针对接口编程”的真正意思是针对超类编程。即：变量的申明类应该是超类型，通常是一个抽象类或者一个接口，如此，只要是具体实现此超类的类所产生的对象，都可以指定给这个变量。这也意味着，声明类时不用理会以后执行时的真正对象">
+<meta property="og:image" content="http://my.csdn.net/uploads/201205/11/1336732187_4598.jpg">
+<meta property="og:updated_time" content="2017-07-12T01:50:18.202Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&lt;font color=#0099ff size=6 face=&quot;微软雅黑&quot;&gt;Head First设计模式-策略模式&lt;&#x2F;font&gt;">
+<meta name="twitter:description" content="设计原则： 找出应用中可能需要变化之处，把他们独立出来，不要和那些不需要变化的代码混在一起。把会变化的部分取出并封装起来，好让其他部分不会受到影响。 针对接口编程，而不是针对实现编程。“针对接口编程”的真正意思是针对超类编程。即：变量的申明类应该是超类型，通常是一个抽象类或者一个接口，如此，只要是具体实现此超类的类所产生的对象，都可以指定给这个变量。这也意味着，声明类时不用理会以后执行时的真正对象">
+<meta name="twitter:image" content="http://my.csdn.net/uploads/201205/11/1336732187_4598.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"always","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/05/23/java设计模式-策略模式/"/>
+
+
+
+
+
+  <title><font color=#0099ff size=6 face="微软雅黑">Head First设计模式-策略模式</font> | Catyee's Tech Blog</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+	<a href="https://github.com/yuchengxin"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Catyee's Tech Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">学习与成长</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/23/java设计模式-策略模式/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Catyee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/image.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catyee's Tech Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"><font color=#0099ff size=6 face="微软雅黑">Head First设计模式-策略模式</font></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T08:59:26+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java读书笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">java读书笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/2017/05/23/java设计模式-策略模式/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="设计原则："><a href="#设计原则：" class="headerlink" title="设计原则："></a><strong>设计原则：</strong></h1><ul>
+<li>找出应用中可能需要变化之处，把他们独立出来，不要和那些不需要变化的代码混在一起。把会变化的部分取出并封装起来，好让其他部分不会受到影响。</li>
+<li>针对接口编程，而不是针对实现编程。“针对接口编程”的真正意思是针对超类编程。即：变量的申明类应该是超类型，通常是一个抽象类或者一个接口，如此，只要是具体实现此超类的类所产生的对象，都可以指定给这个变量。这也意味着，声明类时不用理会以后执行时的真正对象类型。</li>
+<li>多用组合，少用继承</li>
+</ul>
+<h1 id="举例："><a href="#举例：" class="headerlink" title="举例："></a><strong>举例：</strong></h1><p>世界上有各种鸭子，它们外观不同，但是都会游泳，也都会叫。用传统的面向对象的思路来设计，首先有一个Duck的抽象超类，并让各种鸭子继承这个超类。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Duck</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">quack()//鸭子叫的方法</td>
+</tr>
+<tr>
+<td style="text-align:left">swim()//鸭子游泳的方法</td>
+</tr>
+<tr>
+<td style="text-align:left">display()//鸭子外观的方法</td>
+</tr>
+</tbody>
+</table>
+<p>如果是传统的面向对象思想，所有的鸭子都会叫，也都会游泳，所以quack()方法和swim()方法放在超类Duck中实现，而由于每只鸭子的外观不同，所以display()方法在Duck类中设计成抽象方法，由具体的鸭子继承超类后自己去实现。比如现在有绿头鸭MallardDuck和红头鸭ReaheadDuck，它们继承超类Duck，所以有了quack和swim的功能，同时实现display方法从而有了不同的外观。</p>
+<p>但是这样设计有一个问题：<br>需求开始增加，经过分析，发现鸭子都会飞，所以要给鸭子加上飞的功能。最普通的方法是在Duck超类中加一个fly()的方法并实现。这样每一个鸭子继承Duck之后就有了fly()的功能。但是发现需求有误，实际上并不是所有鸭子都会飞。比如尖叫鸭（类似于尖叫鸡），会叫也会游泳，但是尖叫鸭的叫声是“吱吱”，而不是普通鸭子的“咕咕”。所以尖叫鸭继承Duck之后首先要覆盖掉超类中的quack()方法。最严重的问题是尖叫鸭不会飞，但是继承Duck后它有了飞的功能，这肯定不对。同样的方法就是子类继承超类之后覆盖掉Duck中的fly()方法。但是，如果以后还要加入另一种诱饵鸭子，它其实是一个木头假鸭，不会叫也不会飞。难道又要覆盖掉quack()方法和fly()方法吗？这样太不优雅了。可以看到用继承的方式来提供Duck的行为，会使代码牵一发动全身，不便于维护，也不便于扩展。</p>
+<p>所以需要一个更清晰的方法，让“某些”而不是全部鸭子可飞或者可叫。<br>很自然的一种想法是把飞好叫的行为从Duck超类拿出来，另外设计成接口：Flyable和Quackable。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Duck//抽象类</th>
+<th></th>
+<th style="text-align:left">Flyable//接口</th>
+<th></th>
+<th style="text-align:left">Quackable//接口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">swim()//普通方法</td>
+<td></td>
+<td style="text-align:left">fly()//接口中的抽象方法</td>
+<td></td>
+<td style="text-align:left">quack()//接口中的抽象方法</td>
+</tr>
+<tr>
+<td style="text-align:left">display()//抽象方法</td>
+<td></td>
+<td style="text-align:left"></td>
+<td></td>
+<td style="text-align:left"></td>
+</tr>
+</tbody>
+</table>
+<p>这样尖叫鸭可以继承Duck超类，同时实现Quackable接口，而普通鸭子可以继承Duck超类并同时实现Flyable和Quack接口，但是可以看到，每实现一次接口就要重写一此接口中的方法，重复的代码就会急剧增加。显然这不是一种好的方法。</p>
+<p>可以看出造成目前这种困境的原因是需求一直在改变。而现实中需求的改变又恰恰是经常会出现的问题。这个时候就要<strong>找出应用中可能需要经常变化的地方，把他们独立出来，不要和那些不需要变化的代码混在一起。也就是把会变化的部分取出并封装起来，好让其他部分不会受到影响。</strong><br>那么具体到这个例子中要怎么做呢？首先在原始的Duck类中把fly()和quack()拿掉，然后建立两组类，一类与fly相关，一类与quack相关，它们分别实现FlyBehavior和QuackBehavior接口。每一组类将实现各自的动作，可能有一个类实现Quackbehhavior接口完成了“咕咕叫”(Quack类)，另一个类实现Quackbehhavior接口完成了“吱吱叫”(SQuack类)，还有一个类实现Quackbehhavior接口完成了“安静”(MuteQuack类)。另外还有一个类实现FlyBehavior接口完成了“飞”的功能（FlyWithSwing类），还有一个类实现FlyBehavior接口完成了“不能飞”（FlyNoWay类）。<br>但仅仅是这样还不够，因为Java中并没有多继承，如果继承了Duck超类，就不能继承那些实现了FlyBehavior或QuackBehavior的具体实现类。所以要想一种办法把Duck类和我们分离出来的行为整合起来。其实就是在Duck类中添加FlyBehavior和QuackBehavior的属性：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Duck</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">FlyBehavior flyBehavior//飞属性</td>
+</tr>
+<tr>
+<td style="text-align:left">QuackBehavior quackBehavior//叫属性</td>
+</tr>
+<tr>
+<td style="text-align:left">swim()//鸭子游泳的方法</td>
+</tr>
+<tr>
+<td style="text-align:left">display()//鸭子外观的方法</td>
+</tr>
+<tr>
+<td style="text-align:left">performFly()//飞行方法</td>
+</tr>
+<tr>
+<td style="text-align:left">performQuack()//叫方法</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Duck</span></span>&#123;</div><div class="line">    FlyBehavior flyBehavior;</div><div class="line">    QuackBehavior quackBehavior;</div><div class="line">    </div><div class="line">    <span class="comment">//set、get方法</span></div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">display</span><span class="params">()</span></span>;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">swim</span><span class="params">()</span></span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performFly</span><span class="params">()</span></span>&#123;</div><div class="line">        flyBehavior.fly();</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">performQuack</span><span class="params">()</span></span>&#123;</div><div class="line">        quackBehavior.quack();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样当我们实现尖叫鸭的时候：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScreamDuck</span> <span class="keyword">extends</span> <span class="title">Duck</span></span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ScreamDuck</span><span class="params">()</span></span>&#123;</div><div class="line">        quackBehavior = <span class="keyword">new</span> SQuack();</div><div class="line">        flyBehavior = <span class="keyword">new</span> FlyNoWay();</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">display</span><span class="params">()</span></span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样就实现了一个尖叫鸭。而普通绿头鸭子就是：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MallardDuck</span> <span class="keyword">extends</span> <span class="title">Duck</span></span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MallardDuck</span><span class="params">()</span></span>&#123;</div><div class="line">        quackBehavior = <span class="keyword">new</span> Quack();</div><div class="line">        flyBehavior = <span class="keyword">new</span> FlyWithSwing();</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">display</span><span class="params">()</span></span>&#123;</div><div class="line">        ...</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样维护和扩展都容易多了。</p>
+<p>这就是<strong>策略模式</strong>，<br>**</p>
+<h1 id="策略模式的定义："><a href="#策略模式的定义：" class="headerlink" title="策略模式的定义："></a><strong>策略模式的定义：</strong></h1><p>**<br>定义了算法簇，分别封装起来，让它们之间可以互相替换。这个模式可以让算法的变化独立于使用算法的客户。</p>
+<h1 id="策略模式的结构："><a href="#策略模式的结构：" class="headerlink" title="策略模式的结构："></a><strong>策略模式的结构：</strong></h1><p><img src="http://my.csdn.net/uploads/201205/11/1336732187_4598.jpg" alt="策略模式的结构"></p>
+<p>**</p>
+<h1 id="策略模式的组成："><a href="#策略模式的组成：" class="headerlink" title="策略模式的组成："></a><strong>策略模式的组成：</strong></h1><p><strong>环境类(Context)</strong>:用一个ConcreteStrategy对象来配置。维护一个对Strategy对象的引用。可定义一个接口来让Strategy访问它的数据。<br><strong>抽象策略类(Strategy)</strong>:定义所有支持的算法的公共接口。Context使用这个接口来调用某ConcreteStrategy定义的算法。<br><strong>具体策略类(ConcreteStrategy)</strong>:以Strategy接口实现某具体算法。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/策略模式/" rel="tag"># 策略模式</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/26/Java工具类——FreeMarker/" rel="prev" title="<font color=#0099ff size=6 face="微软雅黑">Java工具——FreeMaker模板引擎</font>">
+                <font color=#0099ff size=6 face="微软雅黑">Java工具——FreeMaker模板引擎</font> <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/image.jpg"
+               alt="Catyee" />
+          <p class="site-author-name" itemprop="name">Catyee</p>
+           
+              <p class="site-description motion-element" itemprop="description">To be a rock and not to roll...</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">35</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/yuchengxin" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/2395675263" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.douban.com/people/Y_yucheng/" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  豆瓣
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/yuchengxin" title="github" target="_blank">github</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设计原则："><span class="nav-text">设计原则：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#举例："><span class="nav-text">举例：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#策略模式的定义："><span class="nav-text">策略模式的定义：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#策略模式的结构："><span class="nav-text">策略模式的结构：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#策略模式的组成："><span class="nav-text">策略模式的组成：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catyee</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "a484f4152ac740f6863fc1aa2dfc0231",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+  
+
+
+  
+  <script type="text/javascript" src="/js/src/js.cookie.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scroll-cookie.js?v=5.1.1"></script>
+
+
+  
+
+</body>
+</html>
