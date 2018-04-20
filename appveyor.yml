@@ -12,12 +12,10 @@ install:
   - npm --version
   - npm install -g hexo-cli
   - npm install
-  - npm install hexo-deployer-git
 
 build_script:
   - hexo clean
   - hexo generate
-  - hexo deploy
 
 artifacts:
   - path: public
@@ -34,4 +32,5 @@ on_success:
   - for /d %%p IN (*) do rmdir "%%p" /s /q
   - SETLOCAL EnableDelayedExpansion & robocopy "%APPVEYOR_BUILD_FOLDER%\public" "%TEMP%\static-site" /e & IF !ERRORLEVEL! EQU 1 (exit 0) ELSE (IF !ERRORLEVEL! EQU 3 (exit 0) ELSE (exit 1))
   - git add -A
-  - if "%APPVEYOR_REPO_BRANCH%"=="master" if not defined APPVEYOR_PULL_REQUEST_NUMBER (git diff --quiet --exit-code --cached || git commit -m "Update Static Site" && git push origin %TARGET_BRANCH% && appveyor AddMessage "Static Site Updated")
+  - git commit -m "blog update"
+  - git push origin master
