@@ -1,5 +1,5 @@
 ---
-title: <font color=#0099ff size=6 face="微软雅黑">Java线程池</font>
+title: <font color=#0099ff face="微软雅黑">Java线程池</font>
 date: 2017-06-16 08:50:06
 categories: java多线程
 tags: [java,多线程,Executor,TreadPoolExecutor,ExecutorService]

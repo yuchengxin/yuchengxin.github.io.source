@@ -1,5 +1,5 @@
 ---
-title: <font color=#0099ff size=6 face="微软雅黑">Spring实战（二）上下文Context和Bean的生命周期</font>
+title: <font color=#0099ff face="微软雅黑">Spring实战（二）上下文Context和Bean的生命周期</font>
 date: 2017-06-06 19:43:56
 categories: java读书笔记
 tags: [java,Spring,Bean,Context,Spring模块,SpringBoot]

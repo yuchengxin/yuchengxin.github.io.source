@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">Head First设计模式-策略模式</font>
+title: <font color=#0099ff face="微软雅黑">Head First设计模式-策略模式</font>
 date: 2017-05-23 08:59:26
 categories: java读书笔记
 tags: [java,设计模式,策略模式]

@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">Effective Java 用静态工厂代替构造器</font>
+title: <font color=#0099ff face="微软雅黑">Effective Java 用静态工厂代替构造器</font>
 date: 2017-07-12 08:43:37
 categories: java读书笔记
 tags: [Java,经验之谈,高效开发]

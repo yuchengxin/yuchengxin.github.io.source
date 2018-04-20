@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">编写属于自己的Service(服务)</font>
+title: <font color=#0099ff face="微软雅黑">编写属于自己的Service(服务)</font>
 date: 2017-05-31 21:10:26
 categories: Linux
 tags: [Linux,Service,后台服务,Chkconfig]

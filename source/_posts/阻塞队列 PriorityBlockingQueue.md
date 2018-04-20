@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">阻塞队列 PriorityBlockingQueue</font>
+title: <font color=#0099ff face="微软雅黑">阻塞队列 PriorityBlockingQueue</font>
 date: 2017-06-14 09:37:23
 categories: java多线程
 tags: [java,多线程,阻塞队列,PriorityBlockingQueue]

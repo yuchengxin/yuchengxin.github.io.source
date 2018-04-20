@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">Spring实战（一） 依赖注入和面向切面编程</font>
+title: <font color=#0099ff face="微软雅黑">Spring实战（一） 依赖注入和面向切面编程</font>
 date: 2017-06-02 09:15:26
 categories: java读书笔记
 tags: [java,Spring,依赖注入,面向切面编程,IoC,AOP]

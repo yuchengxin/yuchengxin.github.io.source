@@ -1,5 +1,5 @@
 ---
-title: <font color=#0099ff size=6 face="微软雅黑">阻塞队列DealayQueue</font>
+title: <font color=#0099ff face="微软雅黑">阻塞队列DealayQueue</font>
 date: 2017-06-13 09:42:23
 categories: java多线程
 tags: [java,多线程,阻塞队列,DelayQUeue]

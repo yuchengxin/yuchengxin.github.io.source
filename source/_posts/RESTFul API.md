@@ -1,5 +1,5 @@
 ---
-title: <font color=#0099ff size=6 face="微软雅黑">RESTFul API</font>
+title: <font color=#0099ff face="微软雅黑">RESTFul API</font>
 date: 2017-06-23 08:43:37
 categories: 其它
 tags: [Rest,微服务]

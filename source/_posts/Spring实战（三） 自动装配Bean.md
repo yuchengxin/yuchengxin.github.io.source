@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">Spring实战（三） 自动装配Bean</font>
+title: <font color=#0099ff face="微软雅黑">Spring实战（三） 自动装配Bean</font>
 date: 2017-06-09 08:53:26
 categories: java读书笔记
 tags: [java,Spring,Bean,自动装配]

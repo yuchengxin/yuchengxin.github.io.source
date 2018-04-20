@@ -1,5 +1,5 @@
 ﻿---
-title: <font color=#0099ff size=6 face="微软雅黑">Java工具——FreeMaker模板引擎</font>
+title: <font color=#0099ff face="微软雅黑">Java工具——FreeMaker模板引擎</font>
 date: 2017-05-26 08:47:26
 categories: java工具
 tags: [java,FreeMaker,模板引擎]
